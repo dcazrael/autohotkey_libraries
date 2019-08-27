@@ -14,7 +14,6 @@
  * To enhance performance, only the winning branch is evaluated.
 */
 
-
 class String {
     static init := ("".base.base := String)
     static __Set := Func("String_Set")
@@ -24,10 +23,11 @@ class String {
  * this allows to interact on given object directly using keywords
  *
  * @Parameters
- *    Parameters
+ *    @Key     - [string][int] identifier to trigger different functions.routines
+ *    @Key2    - [string][int] identifier to trigger different functions.routines
  *
  * @Return
- *    Return
+ *    string
 */
     __Get(key, key2:="") {
         if (key == "isInt") {

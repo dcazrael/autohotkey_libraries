@@ -1,7 +1,7 @@
 #include JSON.ahk
 /**
  * Allows us to requests data from the web.
- * We can use either WinHttpRequests or create a com instance of a browser
+ * You can use either WinHttpRequests or create a com instance of a browser
  * 
  *
  * @Parameters

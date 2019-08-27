@@ -1,6 +1,6 @@
 /**
  * reads csv and loads data in arrays
- * can be used to only read columns or rows
+ * can be used to specifically read columns or rows
  *
  * @Parameters
  *    @csv_data             - [array] array to hold the complete csv data
@@ -10,6 +10,8 @@
  *    @delimiter            - [string] delimiter used for creating the 
  *                            csv data (optional)
  *
+ * @Source    - https://github.com/hi5/CSV
+ * 
  * @Remarks
  * strings have to use a different variable declaration
  * Instead of the usual "var := " we have to use "var = "
@@ -51,15 +53,14 @@ class CSV
         if (IsObject(data)){
             this.loadFromArray(data, delimiter)
             return
-        }
-        else if (FileExist(data)){
+        } else if (FileExist(data)){
             this.loadFromFile(data, delimiter)
             return
-        }
-        else if (InStr(data, delimiter)){
+        } else if (InStr(data, delimiter)){
             this.csvLoad(data, delimiter)
             return
         }
+
         MsgBox, No valid CSV data or array was passed. Aborting further actions.
         return
     }
@@ -81,6 +82,7 @@ class CSV
             MsgBox, No file found using this path.
             return
         }
+
         FileRead, read_csv_data, % file_path
         this.csvLoad(read_csv_data, delimiter)
 
@@ -255,8 +257,7 @@ class CSV
             if (p1 == 0) {
                 ; need to exit loop otherwise we loop endlessly
                 break
-            } 
-            else {
+            } else {
                 return_array.push(field)
 
                 ; set the start of our RegEx Search to last result

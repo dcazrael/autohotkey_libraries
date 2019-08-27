@@ -96,96 +96,12 @@ contains(ByRef var, list_items*) {
  * @Return
  *    boolean
 */
-is(ByRef var, type) {
+isType(ByRef var, type) {
     if var is %type%
     {
         return true
     }
     return false
-}
-
-/**
- * This class contains various Control interaction methods
- * Parameters described here are available for most methods
- * thus only explained once here
- *
- * @Parameters
- *    @OutputVar       - [string] The name of the variable in which to store the result of SubCommand.
- *    @Cmd/Value       - [string] These are dependent upon each other and their usage is described at 
- *                                https://www.autohotkey.com/docs/commands/ControlGet.htm#SubCommands.
- *    @Control         - [string] Can be either ClassNN (the classname and instance number of the control) 
- *                                or the control's text, both of which can be determined via Window Spy. 
- *                                When using text, the matching behavior is determined by SetTitleMatchMode. 
- *                                If this parameter is blank, the target window's topmost control will be used.
- *
- *                                To operate upon a control's HWND (window handle), leave the Control parameter blank 
- *                                and specify ahk_id %ControlHwnd% for the WinTitle parameter (this also works on 
- *                                hidden controls even when DetectHiddenWindows is Off). The HWND of a control is 
- *                                typically retrieved via ControlGet Hwnd, MouseGetPos, or DllCall.
- *    @WinTitle        - [string] A window title or other criteria identifying the target window.
- *    @WinText         - [string] If present, this parameter must be a substring from a single text element of the target window 
- *                                (as revealed by the included Window Spy utility). Hidden text elements are detected 
- *                                if DetectHiddenText is ON.
- *    @ExcludeTitle    - [string] Windows whose titles include this value will not be considered.
- *    @ExcludeText     - [string] Windows whose text include this value will not be considered.
- *
-*/
-Class Control 
-{
-/**
- * Retrieves various types of information about a control.
- *
- * @Parameters
- *    @Cmd
- *    @Value
- *    @Control
- *    @WinTitle
- *    @WinText
- *    @ExcludeTitle
- *    @ExcludeText
- *
- * @Return
- *    string
-*/
-    get(Cmd, Value:="", Control:="", WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="") {
-        ControlGet, out, %Cmd%, %Value%, %Control%, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
-        return out
-    }
-
-/**
- * Retrieves which control of the target window has input focus, if any.
- *
- * @Parameters
- *    @WinTitle
- *    @WinText
- *    @ExcludeTitle
- *    @ExcludeText
- *
- * @Return
- *    string
-*/
-    getFocus(WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="") {
-        ControlGetFocus, out, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
-        return out
-    }
-
-/**
- * Retrieves text from a control.
- *
- * @Parameters
- *    @Control
- *    @WinTitle
- *    @WinText
- *    @ExcludeTitle
- *    @ExcludeText
- *
- * @Return
- *    string
-*/
-    getText(Control:="", WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="") {
-        ControlGetText, out, %Control%, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
-        return out
-    }
 }
 
 /**
@@ -494,6 +410,23 @@ inputBox(Title:="", Prompt:="", HIDE:="", Width:="", Height:="", X:="", Y:="", F
 }
 
 /**
+ * joins parameters into string seperated by user defined seperator
+ *
+ * @Parameters
+ *    @sep      - [string] expects any string input
+ *    @params   - [string][array][object] accepts arrays, objects or several strings
+ *
+ * @Return
+ *    string
+*/
+join(sep, params*){
+    for index,param in params {
+        str .= sep . param
+    }
+    return SubStr(str, StrLen(sep)+1)
+}
+
+/**
  * creates messages boxes that can be enabled or disabled, depending if unit tests are being done
  *
  * @Parameters
@@ -543,7 +476,7 @@ mouseGetPos(ByRef OutputVarX:="", ByRef OutputVarY:="", ByRef OutputVarWin:="", 
  *
  * Remarks Coordinates are relative to the active window unless CoordMode was used to change that.
 */
-PixelGetColor(X, Y, mode:="") {
+pixelGetColor(X, Y, mode:="") {
     PixelGetColor, out, %X%, %Y%, %mode%
     return out
 }
@@ -566,7 +499,7 @@ PixelGetColor(X, Y, mode:="") {
  * @Return
  *    boolean
 */
-PixelSearch(ByRef OutputVarX, ByRef OutputVarY, X1, Y1, X2, Y2, ColorID, Variation:="", Mode:="") {
+pixelSearch(ByRef OutputVarX, ByRef OutputVarY, X1, Y1, X2, Y2, ColorID, Variation:="", Mode:="") {
     PixelSearch, OutputVarX, OutputVarY, %X1%, %Y1%, %X2%, %Y2%, %ColorID%, %Variation%, %Mode%
 }
 
@@ -580,7 +513,7 @@ PixelSearch(ByRef OutputVarX, ByRef OutputVarY, X1, Y1, X2, Y2, ColorID, Variati
  * @Return
  *    int
 */
-Random(Min:="", Max:="") {
+random(Min:="", Max:="") {
     Random, out, %Min%, %Max%
     return out
 }
@@ -597,7 +530,7 @@ Random(Min:="", Max:="") {
  * @Return
  *    Return
 */
-RegRead(RootKey, ValueName:="") {
+regRead(RootKey, ValueName:="") {
     RegRead, out, %RootKey%, %ValueName%
     return out
 }
@@ -613,7 +546,7 @@ RegRead(RootKey, ValueName:="") {
  * @Return
  *    Return
 */
-Run(Target, WorkingDir:="", Options:="") {
+run(Target, WorkingDir:="", Options:="") {
     Run, %Target%, %WorkingDir%, %Options%, v
     return out   
 }
@@ -627,7 +560,7 @@ Run(Target, WorkingDir:="", Options:="") {
  * @Return
  *    Return
 */
-SoundGet(ComponentType:="", ControlType:="", DeviceNumber:="") {
+soundGet(ComponentType:="", ControlType:="", DeviceNumber:="") {
     SoundGet, out, %ComponentType%, %ControlType%, %DeviceNumber%
     return out
 }
@@ -641,22 +574,8 @@ SoundGet(ComponentType:="", ControlType:="", DeviceNumber:="") {
  * @Return
  *    Return
 */
-SoundGetWaveVolume(DeviceNumber:="") {
+soundGetWaveVolume(DeviceNumber:="") {
     SoundGetWaveVolume, out, %DeviceNumber%
-    return out
-}
-
-/**
- * Description
- *
- * @Parameters
- *    Parameters
- *
- * @Return
- *    Return
-*/
-StatusBarGetText(Part:="", WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="") {
-    StatusBarGetText, out, %Part%, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
     return out
 }
 
@@ -675,7 +594,7 @@ StatusBarGetText(Part:="", WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeT
  * @Return
  *    no return outalue
 */
-SplitPath(ByRef InputVar, ByRef OutFileName:="", ByRef OutDir:="", ByRef OutExtension:="", ByRef OutNameNoExt:="", ByRef OutDrive:="") {
+splitPath(ByRef InputVar, ByRef OutFileName:="", ByRef OutDir:="", ByRef OutExtension:="", ByRef OutNameNoExt:="", ByRef OutDrive:="") {
     SplitPath, InputVar, OutFileName, OutDir, OutExtension, OutNameNoExt, OutDrive
 }
 /**
@@ -692,7 +611,7 @@ SplitPath(ByRef InputVar, ByRef OutFileName:="", ByRef OutDir:="", ByRef OutExte
  * @Remarks
  *     SubCommand and Param3 parameters are dependent upon each other
 */
-SysGet(Subcommand, Param3:="") {
+sysGet(Subcommand, Param3:="") {
     SysGet, out, %Subcommand%, %Param3%
     return out
 }
@@ -712,94 +631,7 @@ SysGet(Subcommand, Param3:="") {
  * @Remarks
  *     SubCommand, Value1 and Value2 parameters are dependent upon each other
 */
-Transform(Cmd, Value1, Value2:="") {
+transform(Cmd, Value1, Value2:="") {
     Transform, out, %Cmd%, %Value1%, %Value2%
-    return out
-}
-
-/**
- * Retrieves the specified window's unique ID, process ID, process name, or a list of its controls. 
- * It can also retrieve a list of all windows matching the specified criteria.
- *
- * @Parameters
- *    @Cmd              - [string] The operation to perform, which if blank defaults to the ID 
- *                                 sub-command. 
- *                                 See https://www.autohotkey.com/docs/commands/WinGet.htm#SubCommands
- *    @WinTitle         - [string] A window title or other criteria identifying the target window
- *    @WinText          - [string] If present, this parameter must be a substring from a 
- *                                 single text element of the target window
- *    @ExcludeTitle     - [string] Windows whose titles include this value will not be considered.
- *    @ExcludeText      - [string] Windows whose text include this value will not be considered.
- *
- * @Return
- *    string
-*/
-WinGet(Cmd:="", WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="") {
-    WinGet, out, %Cmd%, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
-    return out
-}
-
-/**
- * Retrieves the title of the active window
- *
- * @Return
- *    string
-*/
-WinGetActiveTitle() {
-    WinGetActiveTitle, out
-    return out
-}
-
-/**
- * Retrieves the specified window's class name
- *
- * @Parameters
- *    @WinTitle         - [string] A window title or other criteria identifying the target window
- *    @WinText          - [string] If present, this parameter must be a substring from a 
- *                                 single text element of the target window
- *    @ExcludeTitle     - [string] Windows whose titles include this value will not be considered.
- *    @ExcludeText      - [string] Windows whose text include this value will not be considered.
- *
- * @Return
- *    string
-*/
-WinGetClass(WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="") {
-    WinGetClass, out, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
-    return out
-}
-
-/**
- * Retrieves the text from the specified window
- *
- * @Parameters
- *    @WinTitle         - [string] A window title or other criteria identifying the target window
- *    @WinText          - [string] If present, this parameter must be a substring from a 
- *                                 single text element of the target window
- *    @ExcludeTitle     - [string] Windows whose titles include this value will not be considered.
- *    @ExcludeText      - [string] Windows whose text include this value will not be considered.
- *
- * @Return
- *    string
-*/
-WinGetText(WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="") {
-    WinGetText, out, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
-    return out
-}
-
-/**
- * Retrieves the title from the specified window
- *
- * @Parameters
- *    @WinTitle         - [string] A window title or other criteria identifying the target window
- *    @WinText          - [string] If present, this parameter must be a substring from a 
- *                                 single text element of the target window
- *    @ExcludeTitle     - [string] Windows whose titles include this value will not be considered.
- *    @ExcludeText      - [string] Windows whose text include this value will not be considered.
- *
- * @Return
- *    Return
-*/
-WinGetTitle(WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="") {
-    WinGetTitle, out, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
     return out
 }
