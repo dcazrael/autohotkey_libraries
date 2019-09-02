@@ -12,7 +12,17 @@ class ExplorerInfo {
 
     }
 
-    get(hwnd:="", selection := false) {
+/**
+ * Retrieves paths for file/s from the target Window
+ *
+ * @Parameters
+ *    @hwnd         - [object] Window ID
+ *    @selection    - [boolean] used to retrieve info from selected files only
+ *
+ * @Return
+ *    string
+*/
+    get(hwnd:="", selection:=false) {
         if !(window := this.getWindow(hwnd)) {
             return ErrorLevel := "ERROR"
         }
@@ -42,9 +52,29 @@ class ExplorerInfo {
         return Trim(ret,"`n")
     }
 
+
+/**
+ *Retrieves paths for all files from the target Window
+ *
+ * @Parameters
+ *    @hwnd         - [object] Window ID
+ *
+ * @Return
+ *    string
+*/
     getAll(hwnd:="") {
         return this.get(hwnd)
     }
+
+/**
+ * Retrieves paths for target Window
+ *
+ * @Parameters
+ *    @hwnd         - [object] Window ID
+ *
+ * @Return
+ *    string
+*/
     getPath(hwnd:="") {
         if !(window := this.getWindow(hwnd)) {
             return ErrorLevel := "ERROR"
@@ -67,10 +97,30 @@ class ExplorerInfo {
         }
         return path
     }
+
+/**
+ * Retrieves paths for selected file/s from the target Window
+ *
+ * @Parameters
+ *    @hwnd         - [object] Window ID
+ *
+ * @Return
+ *    string
+*/
     getSelected(hwnd:="") {
         return this.get(hwnd,true)
     }
 
+
+/**
+ * Retrieves information of the target window
+ *
+ * @Parameters
+ *    @hwnd         - [object] Window ID
+ *
+ * @Return
+ *    object or string
+*/
     getWindow(hwnd:="") {
         ; thanks to jethrow for some pointers here
         WinGet, process, processName, % "ahk_id" hwnd := hwnd? hwnd:WinExist("A")
@@ -89,5 +139,6 @@ class ExplorerInfo {
         else if (class ~= "Progman|WorkerW") 
             return "desktop" ; desktop found
     }
+
 
 }
