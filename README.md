@@ -7,7 +7,7 @@ Most things are changed or rewritten to fit my needs or preferences.
 
 ## Array
 
-extends functionality for arrays on the base object  
+extends functionality for arrays and Objects on the base object  
 This allows to do use some methods on the array itself, rather than calling a function and passing the array
 
 ## base64
@@ -18,10 +18,18 @@ base64 decoder and varZ compression (written by [SKAN](https://autohotkey.com/bo
 
 Wrapper for "Control" Commands
 
+## Counter
+
+example from the documention on how to use timers in a class
+
 ## CSV
 
 reads csv and loads data in arrays  
 can be used to specifically read columns or rows
+
+## ExplorerInfo
+
+retrieves info from a specific explorer window 
 
 ## functions
 
