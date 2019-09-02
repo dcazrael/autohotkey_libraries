@@ -2,6 +2,7 @@
  * extends functionality for arrays on the base object
  * 
  * @Source    - https://autohotkey.com/board/topic/83081-ahk-l-customizing-object-and-array/
+ * @Source    - https://gist.github.com/errorseven/559681eb1fa122c14a75455d272abbea (extended Objects)
 */
 Class _Object {
 
