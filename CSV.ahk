@@ -10,7 +10,7 @@
  *    @delimiter            - [string] delimiter used for creating the 
  *                            csv data (optional)
  *
- * @Source    - https://github.com/hi5/CSV
+ * @Source    - https://autohotkey.com/board/topic/51681-csv-library-lib/
  * 
  * @Remarks
  * strings have to use a different variable declaration

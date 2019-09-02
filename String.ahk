@@ -39,7 +39,7 @@ class String {
                 out := false
             }
 
-        } else if (key == "capitalize") || (key == "caps") {
+        } else if (key == "capitalize" || key == "caps") {
             ; capitalizes first letter in the string
             out := Format("{1:U}{2:L}", Substr(this, 1, 1), SubStr(this, 2))
 
@@ -267,14 +267,17 @@ class String {
         out := object()
         if (SubStr(delim, 1, 2) = "R)") {
             this := this.Replace(omit), pos := 0, n:=start:=1
-            if ((needle:=SubStr(delim, 3))="")
+            if ((needle:=SubStr(delim, 3))="") {
                 return, this.split(needle)
-            while, pos := RegExMatch(this, needle, match, start)
+            }
+            while, pos := RegExMatch(this, needle, match, start) {
                 out[n++] := SubStr(this, start, pos-start), start := pos+StrLen(match)
+            }
             out[n] := SubStr(this, start)
-        } else 
+        } else {
             Loop, Parse, this, %delim%, %omit%
                 out[A_Index] := A_LoopField 
+        }
         return, out 
     } 
 

@@ -16,8 +16,7 @@
  *    @ExcludeText     - [string] Windows whose text include this value will not be considered.
  *
 */
-class Window
-{
+class Window {
 /**
  * Retrieves the specified window's unique ID, process ID, process name, or a list of its controls. 
  * It can also retrieve a list of all windows matching the specified criteria.

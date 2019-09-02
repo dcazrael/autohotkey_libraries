@@ -1,4 +1,3 @@
-#include JSON.ahk
 /**
  * Allows us to requests data from the web.
  * You can use either WinHttpRequests or create a com instance of a browser
@@ -13,7 +12,6 @@
  *    JSON objects, than working with the string responses.
 */
 Class NetRequest {
-
     request_header := {"GET":"application/json", "POST":"application/x-www-form-urlencoded;charset=utf-8"}
     method := {"GET":"GET", "POST":"POST"}
     status := "instantiated"
@@ -133,7 +131,6 @@ Class NetRequest {
         }
 
         this.defineTimeout(request_obj, timeouts)
-        request_obj.SetRequestHeader("Content-Type", this.request_header[method])
 
         try {
             request_obj.Open(method, endpoint)
@@ -143,6 +140,8 @@ Class NetRequest {
             fileappend % current_time ": " error.Message ", line:" error.line "`n`n", % A_ScriptDir "\netrequest_error.txt"
             return error.Message
         }
+        
+        request_obj.SetRequestHeader("Content-Type", this.request_header[method])
         
         if (body == "") {
             request_obj.Send()

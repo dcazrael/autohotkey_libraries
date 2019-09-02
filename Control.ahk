@@ -24,8 +24,7 @@
  *    @ExcludeText     - [string] Windows whose text include this value will not be considered.
  *
 */
-Class Control 
-{
+Class Control {
 
     static init := ("".base.base := Control)
     static __Set := Func("Control_Set")

@@ -16,52 +16,6 @@ Functions() {
 }
 
 /**
- * Checks whether a variable's contents are numerically or alphabetically between two values
- * if all 1 or more values are strings they will be compared alphabetically
- * in case of 3 numbers, they will be compared numerically
- *
- * @Parameters
- *    @var          - [int][string] can be either int or string
- *    @LowerBound   - [int][string] can be either int or string
- *    @UpperBound   - [int][string] can be either int or string
- *
- * @Return
- *    boolean
-*/
-isBetween(ByRef var, LowerBound, UpperBound) {
-    If (var >= LowerBound and var <= UpperBound)
-        return true
-}
-
-/**
- * compares string to list of items
- * if item matches comparison, return false (is in list)
- * this compares also arrays and variadic parameters
- * this is valid 
- *
- * @Parameters
- *    @var           - [string][int] can be either int or string
- *    @list_items    - [string][object] list of items, either in an object or in a delimiter
- *                                      separated string without spaces; e.g "1,2,3"
- *    @delimiter     - [string] delimiter for the list
- *
- * @Return
- *    Return
-*/
-inList(ByRef var, list_items, delimiter:=","){
-    if IsObject(list_items) {
-        for each, item in list_items {
-            if (item == var) {
-                return true
-            }
-        }
-        return false
-    } else {
-        return !!InStr(delimiter . list_items . delimiter, delimiter . var . delimiter)
-    }
-}
-
-/**
  * Checks whether a variable's contents partially match one of the items in a list.
  * var can be an int and still be compared
  *
@@ -87,21 +41,40 @@ contains(ByRef var, list_items*) {
 }
 
 /**
- * Checks whether a variable's contents are numeric, uppercase, etc.
+ * adds time to existing time variable
  *
  * @Parameters
- *    @var      - [int][float][number][digit][xdigit][alpha][upper][lower][alnum][space][time]
- *    @type     - [string]
+ *    @DateTime     - [string] name of the variable upon which to operate
+ *                             usually contains a time string
+ *    @Time         - [various] any integer, floating point number, or expression
+ *                              specify a negative number to perform subtraction
+ *    @TimeUnits    - [string] TimeUnits can be either Seconds, Minutes, Hours, or Days 
+ *                             (or just the first letter of each of these)
  *
  * @Return
- *    boolean
+ *    Return
 */
-isType(ByRef var, type) {
-    if var is %type%
-    {
-        return true
-    }
-    return false
+DateAdd(DateTime, Time, TimeUnits) {
+    EnvAdd, DateTime, % Time, % TimeUnits
+    return DateTime
+}
+
+/**
+ * returns the difference between two dates/times
+ *
+ * @Parameters
+ *    @DateTime1    - [string] name of the variable upon which to operate
+ *    @DateTime2    - [various] any integer, floating point number, or expression 
+ *                              (expressions are not supported when TimeUnits is present)
+ *    @TimeUnits    - [string] TimeUnits can be either Seconds, Minutes, Hours, or Days 
+ *                             (or just the first letter of each of these)
+ *
+ * @Return
+ *    Return
+*/
+DateDiff(DateTime1, DateTime2, TimeUnits) {
+    EnvSub, DateTime1, % DateTime2, % TimeUnits
+    return DateTime1
 }
 
 /**
@@ -149,6 +122,47 @@ envGet(EnvVarName) {
     EnvGet, out, %EnvVarName%
     return out
 }
+
+/**
+ * Copies one or more files.
+ *
+ * @Parameters
+ *    @SourcePattern    - [string] name of a single file or folder, or a wildcard 
+ *                                 pattern such as C:\Temp\*.tmp. 
+ *                                 SourcePattern is assumed to be in %A_WorkingDir%, 
+ *                                 if an absolute path isn't specified.
+ *    @DestPattern      - [string] name or pattern of the destination, which is assumed to 
+ *                                 be in %A_WorkingDir% if an absolute path isn't specified. 
+ *                                 The destination directory must already exist.
+ *    @Overwrite        - [boolean] determines whether to overwrite files if they already exist. 
+ *                                  If this parameter is 1 (true), the command overwrites existing 
+ *                                  files. If omitted or 0 (false), the command does not overwrite 
+ *                                  existing files.
+ *
+ * @Return
+ *    no return value
+*/
+fileCopy(SourcePattern, DestPattern, Overwrite:=0) {
+    FileCopy, % SourcePattern, % DestPattern , % Overwrite
+}
+
+/**
+ * Creates a directory/folder.
+ *
+ * @Parameters
+ *    @DirName    - [string] Name of the directory to create, which is assumed to be in 
+ *                           %A_WorkingDir% if an absolute path isn't specified.
+ *
+ * @Return
+ *    no return value
+ *
+ * @Remarks
+ *     This command will also create all parent directories given in DirName if they do not already exist.
+*/
+fileCreateDir(DirName) {
+    FileCreateDir, % DirName
+}
+
 
 /**
  * Reports whether a file or folder is read-only, hidden, etc.
@@ -329,7 +343,7 @@ getKeyState(WhichKey , Mode:="") {
  * @Return
  *    depends on sub-commands for GuiControlGet
 */
-guiControlGet(Subcommand:="", ControlID:="", Param4:="") {
+guiControlGet(ControlID:="", Subcommand:="", Param4:="") {
     GuiControlGet, out, %Subcommand%, %ControlID%, %Param4%
     return out
 }
@@ -407,6 +421,70 @@ input(Options:="", EndKeys:="", MatchList:="") {
 inputBox(Title:="", Prompt:="", HIDE:="", Width:="", Height:="", X:="", Y:="", Font:="", Timeout:="", Default:="") {
     InputBox, out, %Title%, %Prompt%, %HIDE%, %Width%, %Height%, %X%, %Y%, , %Timeout%, %Default%
     return out
+}
+
+/**
+ * compares string to list of items
+ * if item matches comparison, return false (is in list)
+ * this compares also arrays and variadic parameters
+ * this is valid 
+ *
+ * @Parameters
+ *    @var           - [string][int] can be either int or string
+ *    @list_items    - [string][object] list of items, either in an object or in a delimiter
+ *                                      separated string without spaces; e.g "1,2,3"
+ *    @delimiter     - [string] delimiter for the list
+ *
+ * @Return
+ *    Return
+*/
+inList(ByRef var, list_items, delimiter:=","){
+    if IsObject(list_items) {
+        for each, item in list_items {
+            if (item == var) {
+                return true
+            }
+        }
+        return false
+    } else {
+        return !!InStr(delimiter . list_items . delimiter, delimiter . var . delimiter)
+    }
+}
+
+/**
+ * Checks whether a variable's contents are numerically or alphabetically between two values
+ * if all 1 or more values are strings they will be compared alphabetically
+ * in case of 3 numbers, they will be compared numerically
+ *
+ * @Parameters
+ *    @var          - [int][string] can be either int or string
+ *    @LowerBound   - [int][string] can be either int or string
+ *    @UpperBound   - [int][string] can be either int or string
+ *
+ * @Return
+ *    boolean
+*/
+isBetween(ByRef var, LowerBound, UpperBound) {
+    If (var >= LowerBound and var <= UpperBound)
+        return true
+}
+
+/**
+ * Checks whether a variable's contents are numeric, uppercase, etc.
+ *
+ * @Parameters
+ *    @var      - [int][float][number][digit][xdigit][alpha][upper][lower][alnum][space][time]
+ *    @type     - [string]
+ *
+ * @Return
+ *    boolean
+*/
+isType(ByRef var, type) {
+    if var is %type%
+    {
+        return true
+    }
+    return false
 }
 
 /**
@@ -528,12 +606,20 @@ random(Min:="", Max:="") {
  *    @ValueName     - [string] name of the value to retrieve. If omitted, KeyName's default value will be retrieved
  *
  * @Return
- *    Return
+ *    string
 */
 regRead(RootKey, ValueName:="") {
     RegRead, out, %RootKey%, %ValueName%
     return out
 }
+
+/**
+ * clears any existing tooltips from the screen
+*/
+RemoveToolTip() {
+    ToolTip
+}
+
 
 /**
  * Runs an external program.
@@ -544,21 +630,24 @@ regRead(RootKey, ValueName:="") {
  *    @Options      - [string] see Options at https://www.autohotkey.com/docs/commands/Run.htm#Parameters
  *
  * @Return
- *    Return
 */
 run(Target, WorkingDir:="", Options:="") {
     Run, %Target%, %WorkingDir%, %Options%, v
-    return out   
 }
 
 /**
- * Description
+ * Retrieves various settings from a sound device (master mute, master volume, etc.)
  *
  * @Parameters
- *    Parameters
+ *    @ComponentType    - [string] has to be special parameter
+ *                                 see https://www.autohotkey.com/docs/commands/SoundGet.htm#Parameters
+ *    @ControlType      - [string] has to be special parameter
+ *                                 see https://www.autohotkey.com/docs/commands/SoundGet.htm#Parameters
+ *    @DeviceNumber     - [int] A number between 1 and the total number of supported devices. 
+ *                              If this parameter is omitted, it defaults to 1
  *
  * @Return
- *    Return
+ *    string
 */
 soundGet(ComponentType:="", ControlType:="", DeviceNumber:="") {
     SoundGet, out, %ComponentType%, %ControlType%, %DeviceNumber%
@@ -566,13 +655,14 @@ soundGet(ComponentType:="", ControlType:="", DeviceNumber:="") {
 }
 
 /**
- * Description
+ * Retrieves the wave output volume for a sound device.
  *
  * @Parameters
- *    Parameters
+ *    @DeviceNumber    - [int] A number between 1 and the total number of supported devices. 
+ *                             If this parameter is omitted, it defaults to 1
  *
  * @Return
- *    Return
+ *    int
 */
 soundGetWaveVolume(DeviceNumber:="") {
     SoundGetWaveVolume, out, %DeviceNumber%
@@ -592,7 +682,7 @@ soundGetWaveVolume(DeviceNumber:="") {
  *    OutDrive          - [string] Name of the variable in which to store the drive letter or server name of the file
  *
  * @Return
- *    no return outalue
+ *    no return value
 */
 splitPath(ByRef InputVar, ByRef OutFileName:="", ByRef OutDir:="", ByRef OutExtension:="", ByRef OutNameNoExt:="", ByRef OutDrive:="") {
     SplitPath, InputVar, OutFileName, OutDir, OutExtension, OutNameNoExt, OutDrive
@@ -634,4 +724,22 @@ sysGet(Subcommand, Param3:="") {
 transform(Cmd, Value1, Value2:="") {
     Transform, out, %Cmd%, %Value1%, %Value2%
     return out
+}
+
+/**
+ * displays tooltip with given string and automatically removes it after 1 second
+ *
+ * @Parameters
+ *    @string    - [string] (optional)
+ *
+ * @Return
+ *    no return value
+ *
+ * @Remarks
+ *     can be called without parameter; autohotkey calls an empty tooltip to clear existing ones
+*/
+tooltip(string:="", timeout:=1000) {
+    ToolTip, % string
+    RemoveToolTip := Func("RemoveToolTip").Bind()
+    SetTimer %RemoveToolTip%, % -timeout
 }
