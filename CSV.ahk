@@ -1,6 +1,6 @@
 /**
  * reads csv and loads data in arrays
- * can be used to specifically read columns or rows
+ * can be used to only read columns or rows
  *
  * @Parameters
  *    @csv_data             - [array] array to hold the complete csv data
@@ -57,7 +57,7 @@ class CSV
             this.loadFromFile(data, delimiter)
             return
         } else if (InStr(data, delimiter)){
-            this.csvLoad(data, delimiter)
+            this.load(data, delimiter)
             return
         }
 
@@ -84,7 +84,7 @@ class CSV
         }
 
         FileRead, read_csv_data, % file_path
-        this.csvLoad(read_csv_data, delimiter)
+        this.load(read_csv_data, delimiter)
 
     }
 
@@ -116,7 +116,7 @@ class CSV
                 column_data .= "`r`n"
             }
         }
-        this.csvLoad(column_data, delimiter)
+        this.load(column_data, delimiter)
     }
 
 
@@ -132,7 +132,7 @@ class CSV
  * @Return
  *    Return
 */
-    csvLoad(raw_data, delimiter:="`,"){
+    load(raw_data, delimiter:="`,"){
         raw_data := StrReplace(raw_data, "`r`n`r`n", "`r`n")
 
         ; fix for last newline and not importing all columns
@@ -161,12 +161,13 @@ class CSV
  *
  * @Parameters
  *    @col_number    - [int] expects number of column for reading values
- *    @skip_headers    - [int] number of rows to skip (optional)
+ *    @skip_headers  - [int] number of rows to skip (optional)
+ *    @array         - [boolean] true for return as array, false for string
  *
  * @Return
  *    no return value
 */
-    csvReadCol(col_number, skip_headers:=0){
+    readCol(col_number, skip_headers:=0, array=false){
         col_data := ""
         Loop, % this.csv_total_rows {
             if (A_Index <= skip_headers) {
@@ -177,6 +178,9 @@ class CSV
                 col_data .= "`,"
             }
         }
+        if (array == true) {
+            return StrSplit(col_data, ",")
+        }
         return col_data
     }
 
@@ -185,17 +189,21 @@ class CSV
  *
  * @Parameters
  *    @row_number    - [int] expects number of row for reading values
+ *    @array         - [boolean] true for return as array, false for string
  *
  * @Return
  *    no return value
 */
-    csvReadRow(row_number) {
+    readRow(row_number, array:=false) {
         row_data := ""
         Loop, this.csv_total_cols {
             row_data .= this.csv_data[row_number][A_Index]
             if (A_Index != this.csv_total_cols) {
                 row_data .= "`,"
             }
+        }
+        if (array == true) {
+            return StrSplit(row_data, ",")
         }
         return row_data
     }

@@ -1,5 +1,5 @@
 /**
- * extends functionality for arrays on the base object
+ * extends functionality for Objects on the base object
  * 
  * @Source    - https://autohotkey.com/board/topic/83081-ahk-l-customizing-object-and-array/
  * @Source    - https://gist.github.com/errorseven/559681eb1fa122c14a75455d272abbea (extended Objects)
@@ -7,7 +7,25 @@
 Class _Object {
 
 /**
+ * Getter meta function
+ * this allows to interact on given object directly using keywords
+ *
+ * @Parameters
+ *    @Key     - [string][int] identifier to trigger different functions/routines
+ *
+ * @Return
+ *    string
+*/
+    __Get(key) {
+        if (key == "rmDupe") || (key == "rmDuplicate") {
+            ; removes duplicate values from array
+            this.removeDuplicate()
+        }
+    }
+
+/**
  * Deterimines if an Object is linear (associative Arrays are treated as objects, not arrays)
+ * this is a Property
 */
     IsLinear[] {
         Get {
@@ -20,6 +38,7 @@ Class _Object {
 
 /**
  * creates a msgbox for the created print result
+ * this is a Property
  *
  * @Usage
  *     obj := [1, 2, 3, {a: 1, b: 2}]
@@ -33,6 +52,24 @@ Class _Object {
         
         Get {
             msgbox(this.createPrintResult(this, level:=0))
+        }
+    }
+
+/**
+ * Returns a reverse ordered Array/Object
+ * this is a Property
+ *
+ * @Return
+ *    Return
+*/
+    Reverse[] {
+        
+        Get {
+            out := []
+            loop % this.count {
+                out.push(this.pop())
+            }
+            return out
         }
     }
 
@@ -69,39 +106,7 @@ Class _Object {
         }
         return out
     }
-
-    Reverse[] {
-        /*
-        Returns a reverse ordered Array/Object
-        
-        Usage: 
-            obj := [1, 2, 3].reverse
-            obj.print ; --> [3, 2, 1]
-        */
-        
-        Get {
-            x := []
-            loop % this.count
-                x.push(this.pop())
-            return x
-        }
-    }
     
-    
-    IsCircle(Objs=0) {
-        /*
-        Function by GeekDude
-        Returns True if Object contains a reference to itself
-        Intended for internal use, but have at it if you find a use
-        */
-        
-        if !Objs
-            Objs := {}
-        For Key, Val in this
-            if (IsObject(Val)&&(Objs[&Val]||Val.IsCircle((Objs,Objs[&Val]:=1))))
-                return 1
-        return 0
-    }
     
     Contains(x, y:="") {
         /*
@@ -115,8 +120,7 @@ Class _Object {
         If this.IsCircle()
             return 0
     
-        For k, v in this {         
-
+        For k, v in this {
             if (v == x)
                 return y "[" k "]"
 
@@ -128,42 +132,6 @@ Class _Object {
         }
 
         return 0
-    }   
-
-    Sort(options:="", delim:="`n") {
-        /*    
-        Use Sort Command documentation to interpret options. The deliminator is 
-        seperate for ease of implementation.
-        
-        Usage: 
-            obj := [c, d, b, a].sort()
-            obj.print ; --> [a, b, c, d]
-        */
-        
-        For e, v in this
-            r .= v delim
-        Sort, r, % options "D" delim
-        return StrSplit(trim(r, delim), delim)
-    }
-}
-
-class _Array Extends _Object {
-/**
- * Getter meta function
- * this allows to interact on given object directly using keywords
- *
- * @Parameters
- *    @Key     - [string][int] identifier to trigger different functions/routines
- *
- * @Return
- *    string
-*/
-    __Get(key) {
-        if (key == "rmDupe") || (key == "rmDuplicate") {
-            ; removes duplicate values from array
-            this.removeDuplicate()
-        }
-        return out
     }
 
 /**
@@ -177,21 +145,42 @@ class _Array Extends _Object {
 */
     concat(arrays*) {
         
-        results := []
+        out := []
 
         ; First add the values from the instance being called on
         for index, value in this {
-            results.push(value)
+            out.push(value)
         }
 
         ; Second, add arrays given in parameter
         for index, array in arrays {
             for index, element in array {
-                results.push(element)
+                out.push(element)
             }
         }
 
-        return results
+        return out
+    }
+
+
+/**
+ * Function by GeekDude
+   Returns True if Object contains a reference to itself
+ *
+ * @Parameters
+ *    object    - [object] name of the object to check
+ *
+ * @Return
+ *    boolean
+*/
+    IsCircle(object=0) {
+        
+        if !object
+            object := {}
+        For Key, Val in this
+            if (IsObject(Val)&&(object[&Val]||Val.IsCircle((object,object[&Val]:=1))))
+                return 1
+        return 0
     }
 
 
@@ -206,9 +195,29 @@ class _Array Extends _Object {
 */
     join(delimiter=",") {
         for i,value in this {
-            result := value (i < this.Length() ? delimiter : "")
+            out := value (i < this.Length() ? delimiter : "")
         }
-        return result
+        return out
+    }
+
+/**
+ * removed duplicates by creating an object using the values as keys
+ *
+ * @Source    - https://stackoverflow.com/questions/46432447/how-do-i-remove-duplicates-from-an-autohotkey-array
+ * 
+ * @Return
+ *    no return value
+*/
+    removeDuplicate() { ; Hash O(n) - Linear
+        hash := {}
+
+        for index, value in this {
+            if (!hash[value]) {
+                hash[(value)] := 1
+            } else {
+                this.removeAt(index)
+            }
+        }
     }
 
 /**
@@ -273,7 +282,7 @@ class _Array Extends _Object {
     splice(start, delete_count:=-1, args*) {
 
         array_length := this.Length()
-        exiting := []
+        out := []
 
         ; Determine starting index
         if (start > array_length) {
@@ -291,7 +300,7 @@ class _Array Extends _Object {
 
         ; Remove elements
         Loop, % delete_count {
-            exiting.push(this[start])
+            out.push(this[start])
             this.removeAt(start)
         }
 
@@ -303,35 +312,44 @@ class _Array Extends _Object {
             args.removeAt(1)
         }
 
-        return exiting
+        return out
     }
+}
 
 /**
- * removed duplicates by creating an object using the values as keys
+ * duplicating functionality to Arrays (object and arrays are not the same)
  *
- * @Source    - https://stackoverflow.com/questions/46432447/how-do-i-remove-duplicates-from-an-autohotkey-array
- * 
- * @Return
- *    no return value
 */
-    removeDuplicate() { ; Hash O(n) - Linear
-        hash := {}
+class _Array Extends _Object {
 
-        for index, value in this {
-            if (!hash[value]) {
-                hash[(value)] := 1
-            } else {
-                this.removeAt(index)
-            }
-        }
-    }
+}
+
+/**
+ * redefines Object().
+ *
+ * @Parameters
+ *    [string]  keyword to trigger the functions
+ *
+ * @Return
+ *    array
+*/
+Object(prm*) {
+/*
+    Create a new object derived from _Object.
+*/
+    obj := new _Object
+    ; For each pair of parameters, store a key-value pair.
+    Loop % prm.MaxIndex()//2 
+        obj[prm[A_Index*2-1]] := prm[A_Index*2]
+    ; Return the new object.
+    return obj
 }
 
 /**
  * redefines Array().
  *
  * @Parameters
- *    @prm    - [string]  keyword to trigger the 
+ *    @prm    - [string]  keyword to trigger the functions
  *
  * @Return
  *    array
@@ -344,33 +362,25 @@ Array(prm*) {
     return prm
 }
 
-Object(prm*) {
-    /*
-        Create a new object derived from _Object.
-    */
-    obj := new _Object
-    ; For each pair of parameters, store a key-value pair.
-    Loop % prm.MaxIndex()//2 
-        obj[prm[A_Index*2-1]] := prm[A_Index*2]
-    ; Return the new object.
-    return obj
-}
-
-StrSplit(x, dlm:="", opt:="") {
-    /* 
-    Use help documentation definition to determine options. This override 
-    is here to properly intialize an Extended Object using our class.
+/**
+ * This override is here to properly intialize an Extended Object using our class.
+ *
+ * @Parameters
+ *    String        - [string] A string to split.
+ *    Delimiters    - [string] Character to split the string by
+ *    OmitChars     - [string] An optional list of characters (case sensitive) 
+ *                             to exclude from the beginning and end of each array element.
+ *
+ * @Return
+ *    object
+*/
+StrSplit(String, Delimiters:="", OmitChars:="") {
     
-    Usage:
-        Obj := StrSplit("abc")
-        Obj.print ; --> ["a", "b", "c"]
-    */
+    object := {}
+    StringSplit, output, String, Delimiters, OmitChars
     
-    r := []
-    StringSplit, o, x, %dlm%, %opt%
-    
-    loop, %o0% 
-        r.push(o%A_index%)
+    loop, %output0% 
+        object.push(output%A_index%)
  
-    return r
+    return object
 }
