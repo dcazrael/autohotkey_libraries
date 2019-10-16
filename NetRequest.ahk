@@ -11,6 +11,8 @@
  *    This is by no means necessary, but it's easier dealing with 
  *    JSON objects, than working with the string responses.
 */
+#Include <JSON>
+
 Class NetRequest {
     request_header := {"GET":"application/json", "POST":"application/x-www-form-urlencoded;charset=utf-8"}
     method := {"GET":"GET", "POST":"POST"}
@@ -48,24 +50,17 @@ Class NetRequest {
  * @Return
  *    JSON Object
 */
-    apiRequest(id, parms*) {
-        if (endpoint != ""){
-            this.endpoint := endpoint
-        }
-        for each, parameter in parms {
-            if (A_Index == 1) {
-                endpoint .= "?"
-            }
-            endpoint .= parameter
-
-            if (A_Index != parms.length){
-                endpoint .= "&"
-            }
+    apiRequest(parms*) {
+        for each, parm in parms {
+            parameters .= (A_Index == 1 ? "?" : "&") . parm
         }
 
-        request := this.createRequestObj(this.host . "/" . this.endpoint . "/" . id)
+        request := this.createRequestObj(this.host . "/" . this.endpoint . parameters)
         if (!Isobject(request)) {
             return request
+        }
+        if (!request) {
+         return false
         }
         json_response := JSON.Load(request.ResponseText)
         return json_response
@@ -135,7 +130,7 @@ Class NetRequest {
         try {
             request_obj.Open(method, endpoint)
         } catch error {
-            MsgBox, error.message
+            MsgBox, % error.message
             FormatTime, current_time, %A_Now%, yyyy.MM.dd hh:mm:ss
             fileappend % current_time ": " error.Message ", line:" error.line "`n`n", % A_ScriptDir "\netrequest_error.txt"
             return error.Message
@@ -152,7 +147,7 @@ Class NetRequest {
         try {
             request_obj.WaitForResponse()
         } catch error {
-            MsgBox, error.message
+            MsgBox, % error.message
             FormatTime, current_time, %A_Now%, yyyy.MM.dd hh:mm:ss
             fileappend % current_time ": " error.Message ", line:" error.line "`n`n", % A_ScriptDir "\netrequest_error.txt"
             return error.Message

@@ -6,28 +6,31 @@
 */
 Class _Object {
 
-/**
- * Getter meta function
- * this allows to interact on given object directly using keywords
- *
- * @Parameters
- *    @Key     - [string][int] identifier to trigger different functions/routines
- *
- * @Return
- *    string
-*/
+    /**
+     * Getter meta function
+     * this allows to interact on given object directly using keywords
+     *
+     * @Parameters
+     *    @Key     - [string][int] identifier to trigger different functions/routines
+     *
+     * @Return
+     *    string
+    */
     __Get(key) {
         if (key == "rmDupe") || (key == "rmDuplicate") {
             ; removes duplicate values from array
-            this.removeDuplicate()
+            return this.removeDuplicate()
+        } else if (key == "rmEmpty") {
+            ; removes empty values from array
+            return this.removeEmpty()
         }
     }
 
-/**
- * Deterimines if an Object is linear (associative Arrays are treated as objects, not arrays)
- * this is a Property
-*/
-    IsLinear[] {
+    /**
+     * Deterimines if an Object is linear (associative Arrays are treated as objects, not arrays)
+     * this is a Property
+    */
+    isLinear[] {
         Get {
             While (A_Index != this.MaxIndex()) 
                 If !(this.hasKey(A_Index)) 
@@ -36,57 +39,62 @@ Class _Object {
         }
     }
 
-/**
- * creates a msgbox for the created print result
- * this is a Property
- *
- * @Usage
- *     obj := [1, 2, 3, {a: 1, b: 2}]
- *     obj.print ; --> [1, 2, 3, {a:1, b:2}]
- *     arr := [1, 2, "ape"]
- *     arr.print()
- *     
-        */
-*/
-    Print[] {
+    /**
+     * creates a msgbox for the created print result
+     * this is a Property
+     *
+     * @Usage
+     *     obj := [1, 2, 3, {a: 1, b: 2}]
+     *     obj.print ; --> [1, 2, 3, {a:1, b:2}]
+     *     arr := [1, 2, "ape"]
+     *     arr.print()
+     *     
+            */
+    */
+    print[] {
         
         Get {
             msgbox(this.createPrintResult(this, level:=0))
         }
     }
 
-/**
- * Returns a reverse ordered Array/Object
- * this is a Property
- *
- * @Return
- *    Return
-*/
-    Reverse[] {
+    /**
+     * Returns a reverse ordered Array/Object
+     * this is a Property
+     *
+     * @Return
+     *    Return
+    */
+    reverse[] {
         
         Get {
             out := []
-            loop % this.count {
-                out.push(this.pop())
+            if (!IsObject(this)) {
+                loop % this.count {
+                    out.push(this.pop())
+                }
+            } else {
+                loop % this.MaxIndex() {
+                    out.push(this.pop())
+                }
             }
             return out
         }
     }
 
-
-/**
- * creates the output for displaying the array. Recursively goes over the array 
- * and indents if array has depth
- *
- * @Parameters
- *    @array    - [array] array to be sorted, the recursive call will take care of nested arrays
- *    @level    - [int] for nested arrays
- *
- * @Source    - http://autohotkey.com/board/topic/70490-print-array/?p=492815
- *
- * @Return
- *    string
-*/
+    /**
+     * creates the output for displaying the array. Recursively goes over the array 
+     * and indents if array has depth
+     *
+     * @Parameters
+     *    @array    - [array] array to be sorted, the recursive call will take care of nested arrays
+     *    @level    - [int] for nested arrays
+     *
+     * @Source    - http://autohotkey.com/board/topic/70490-print-array/?p=492815
+     *
+     * @Return
+     *    string
+    */
     createPrintResult(array, level:=0) {
         Loop, % 4 + (level*4) {
             Tabs .= A_Space
@@ -107,42 +115,46 @@ Class _Object {
         return out
     }
     
-    
-    Contains(x, y:="") {
-        /*
-        Returns a Str index (True) or False  
-        
-        Usage: 
-            obj := [1, 3, 2, [5, 4]] 
-            obj.contains(4) ; --> [4][2]
-        */
+    /**
+     * Checks if object contains value
+     *
+     * @Parameters
+     *    Parameters
+     *
+     * @Return
+     *    boolean
+    */
+    contains(compare_value, output_string:="") {
         
         If this.IsCircle()
             return 0
     
-        For k, v in this {
-            if (v == x)
-                return y "[" k "]"
+        For key, value in this {
+            if (value == compare_value) {
+                return output_string "[" key "]"
+            }
 
-            if (IsObject(v) && v != this) 
-                z := this[k].contains(x, y "[" k "]" )
+            if (IsObject(value) && value != this) {
+                found_in_sub_object := this[key].contains(compare_value, output_string "[" key "]" )
+            }
         
-            if (z)
-                return z
+            if (found_in_sub_object) {
+                return found_in_sub_object
+            }
         }
 
         return 0
     }
 
-/**
- * Used to merge two or more arrays. This method does not change the existing arrays, but instead returns a new array.
- *
- * @Parameters
- *    @arrays    - [array] 1 or more arrays to merge
- *
- * @Return
- *    array
-*/
+    /**
+     * Used to merge two or more arrays. This method does not change the existing arrays, but instead returns a new array.
+     *
+     * @Parameters
+     *    @arrays    - [array] 1 or more arrays to merge
+     *
+     * @Return
+     *    array
+    */
     concat(arrays*) {
         
         out := []
@@ -162,52 +174,52 @@ Class _Object {
         return out
     }
 
-
-/**
- * Function by GeekDude
-   Returns True if Object contains a reference to itself
- *
- * @Parameters
- *    object    - [object] name of the object to check
- *
- * @Return
- *    boolean
-*/
-    IsCircle(object=0) {
+    /**
+     * Function by GeekDude
+       Returns True if Object contains a reference to itself
+     *
+     * @Parameters
+     *    object    - [object] name of the object to check
+     *
+     * @Return
+     *    boolean
+    */
+    isCircle(object=0) {
         
         if !object
             object := {}
-        For Key, Val in this
-            if (IsObject(Val)&&(object[&Val]||Val.IsCircle((object,object[&Val]:=1))))
+        For Key, Val in this {
+            if (IsObject(Val)&&(object[&Val]||Val.IsCircle((object,object[&Val]:=1)))) {
                 return 1
+            }
+        }
         return 0
     }
 
-
-/**
- * joins parameters into string seperated by user defined seperator
- *
- * @Parameters
- *    @delimiter      - [string] expects any string input
- *
- * @Return
- *    string
-*/
+    /**
+     * joins parameters into string seperated by user defined seperator
+     *
+     * @Parameters
+     *    @delimiter      - [string] expects any string input
+     *
+     * @Return
+     *    string
+    */
     join(delimiter=",") {
-        for i,value in this {
-            out := value (i < this.Length() ? delimiter : "")
+        for i, value in this {
+            out .= value (i < this.Length() ? delimiter : "")
         }
         return out
     }
 
-/**
- * removed duplicates by creating an object using the values as keys
- *
- * @Source    - https://stackoverflow.com/questions/46432447/how-do-i-remove-duplicates-from-an-autohotkey-array
- * 
- * @Return
- *    no return value
-*/
+    /**
+     * removed duplicates by creating an object using the values as keys
+     *
+     * @Source    - https://stackoverflow.com/questions/46432447/how-do-i-remove-duplicates-from-an-autohotkey-array
+     * 
+     * @Return
+     *    no return value
+    */
     removeDuplicate() { ; Hash O(n) - Linear
         hash := {}
 
@@ -218,19 +230,40 @@ Class _Object {
                 this.removeAt(index)
             }
         }
+        return this
     }
 
-/**
- * sorts a 2D array 
- *
- * @Parameters
- *    @order    - [string] expects following inputs "A", "D", "R"
- *
- * @Source    - https://sites.google.com/site/ahkref/custom-functions/sortarray
- *
- * @Return
- *    array
-*/
+    /**
+     * remove empty keys from array
+     *
+     * @Return
+     *    array
+    */
+    removeEmpty() {
+        temp_new_array := []
+        temp_new_array.SetCapacity(this.GetCapacity())
+        for k, v in this {
+            if (v) {
+                temp_new_array.Push(v)
+            }
+        }
+        this := temp_new_array
+        temp_new_array := ""
+
+        return this
+    }
+
+    /**
+     * sorts a 2D array 
+     *
+     * @Parameters
+     *    @order    - [string] expects following inputs "A", "D", "R"
+     *
+     * @Source    - https://sites.google.com/site/ahkref/custom-functions/sortarray
+     *
+     * @Return
+     *    array
+    */
     sort(order:="A") {
         ;Order A: Ascending, D: Descending, R: Reverse
         max_index := ObjMaxIndex(this)
@@ -268,17 +301,17 @@ Class _Object {
         return this
     }
 
-/**
- * changes the contents of an array by removing or replacing existing elements and/or adding new elements in place
- *
- * @Parameters
- *    @start            - [] index to insert at
- *    @delete_count      - [] replacement count
- *    @args             - [string][int]element to be replaced or elements to be added
- *
- * @Return
- *    array
-*/
+    /**
+     * changes the contents of an array by removing or replacing existing elements and/or adding new elements in place
+     *
+     * @Parameters
+     *    @start            - [] index to insert at
+     *    @delete_count      - [] replacement count
+     *    @args             - [string][int]element to be replaced or elements to be added
+     *
+     * @Return
+     *    array
+    */
     splice(start, delete_count:=-1, args*) {
 
         array_length := this.Length()
@@ -334,13 +367,13 @@ class _Array Extends _Object {
  *    array
 */
 Object(prm*) {
-/*
-    Create a new object derived from _Object.
-*/
+
+    ; Create a new object derived from _Object.
     obj := new _Object
     ; For each pair of parameters, store a key-value pair.
-    Loop % prm.MaxIndex()//2 
+    Loop % prm.MaxIndex()//2 {
         obj[prm[A_Index*2-1]] := prm[A_Index*2]
+    }
     ; Return the new object.
     return obj
 }
@@ -360,27 +393,4 @@ Array(prm*) {
     ; is not called and any instance variables are not initialized.
     prm.base := _Array
     return prm
-}
-
-/**
- * This override is here to properly intialize an Extended Object using our class.
- *
- * @Parameters
- *    String        - [string] A string to split.
- *    Delimiters    - [string] Character to split the string by
- *    OmitChars     - [string] An optional list of characters (case sensitive) 
- *                             to exclude from the beginning and end of each array element.
- *
- * @Return
- *    object
-*/
-StrSplit(String, Delimiters:="", OmitChars:="") {
-    
-    object := {}
-    StringSplit, output, String, Delimiters, OmitChars
-    
-    loop, %output0% 
-        object.push(output%A_index%)
- 
-    return object
 }

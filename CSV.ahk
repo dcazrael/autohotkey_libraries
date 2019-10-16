@@ -4,7 +4,7 @@
  *
  * @Parameters
  *    @csv_data             - [array] array to hold the complete csv data
- *    @mismatched_columns   - [bool] if mismatched columns are detected, reject data
+ *    @error                - [bool] if data couldn't be loaded error turns true
  *    @passed_csv_data      - [string][array] can be string or array
  *                            file_path is a considered a string
  *    @delimiter            - [string] delimiter used for creating the 
@@ -27,7 +27,6 @@
 class CSV
 {
     csv_data := []
-    mismatched_columns := false
 
     __New(passed_csv_data, delimiter:=","){
         if passed_csv_data is not Number
@@ -62,6 +61,7 @@ class CSV
         }
 
         MsgBox, No valid CSV data or array was passed. Aborting further actions.
+        this.error := true
         return
     }
 
@@ -168,18 +168,19 @@ class CSV
  *    no return value
 */
     readCol(col_number, skip_headers:=0, array=false){
-        col_data := ""
+        col_data := (array ? [] : "")
         Loop, % this.csv_total_rows {
             if (A_Index <= skip_headers) {
                 continue
             }
-            col_data .= this.csv_data[A_Index][col_number]
-            if (A_Index != this.csv_total_rows) {
-                col_data .= "`,"
+            if (array) {
+                col_data.push(this.csv_data[A_Index][col_number])
+            } else {
+                col_data .= this.csv_data[A_Index][col_number]
+                if (A_Index != this.csv_total_rows) {
+                    col_data .= "`,"
+                }
             }
-        }
-        if (array == true) {
-            return StrSplit(col_data, ",")
         }
         return col_data
     }
@@ -195,15 +196,16 @@ class CSV
  *    no return value
 */
     readRow(row_number, array:=false) {
-        row_data := ""
+        row_data := array ? [] : ""
         Loop, this.csv_total_cols {
-            row_data .= this.csv_data[row_number][A_Index]
-            if (A_Index != this.csv_total_cols) {
-                row_data .= "`,"
+            if (array) {
+                row_data.push(this.csv_data[row_number][A_Index])
+            } else {
+                row_data .= this.csv_data[row_number][A_Index]
+                if (A_Index != this.csv_total_cols) {
+                    row_data .= "`,"
+                }
             }
-        }
-        if (array == true) {
-            return StrSplit(row_data, ",")
         }
         return row_data
     }

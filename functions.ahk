@@ -123,6 +123,10 @@ envGet(EnvVarName) {
     return out
 }
 
+fileAppend(text, fileName, encoding) {
+    FileAppend, % text, % fileName, % encoding
+}
+
 /**
  * Copies one or more files.
  *
@@ -161,6 +165,19 @@ fileCopy(SourcePattern, DestPattern, Overwrite:=0) {
 */
 fileCreateDir(DirName) {
     FileCreateDir, % DirName
+}
+
+/**
+ * Deletes one or more files.
+ *
+ * @Parameters
+ *    @FilePattern    - [string] The name of a single file or a wildcard pattern such as "C:\Temp\*.tmp"
+ *
+ * @Return
+ *    no return value
+*/
+fileDelete(FilePattern) {
+    FileDelete, % FilePattern
 }
 
 
@@ -379,9 +396,25 @@ imageSearch(ByRef OutputVarX, ByRef OutputVarY, X1, Y1, X2, Y2, ImageFile) {
  * @Return
  *    Return
 */
-iniRead(Filename, Section, Key, Default:="") {
+iniRead(Filename, Section, Key:="", Default:="") {
     IniRead, out, %Filename%, %Section%, %Key%, %Default%
     return out
+}
+
+/**
+ * Writes to keys and sections of an ini file. 
+ *
+ * @Parameters
+ *    @Filename     - [string] filename
+ *    @Value        - [string] value of the key
+ *    @Section      - [string] name of the section to read from
+ *    @Key          - [string] name of the key to read
+ *
+ * @Return
+ *    no return value
+*/
+iniWrite(Filename, Value, Section, Key:="") {
+    IniWrite, %Value%, %Filename%, %Section%, %Key%
 }
 
 /**
@@ -497,11 +530,26 @@ isType(ByRef var, type) {
  * @Return
  *    string
 */
-join(sep, params*){
+join(sep, params*) {
     for index,param in params {
         str .= sep . param
     }
     return SubStr(str, StrLen(sep)+1)
+}
+
+/**
+ * closes process, in case we have hidden windows or need to remove a process
+ *
+ * @Parameters
+ *    @pName    - [string] expects valid process name; e.g "iexplore.exe", "sublime_text.exe"
+ *
+ * @Return
+ *    no return value
+*/
+killProcess(pName){
+    for process in ComObjGet("winmgmts:").ExecQuery("Select * from Win32_Process where Name='" . pName . "'"){
+        Process, Close,% process.ProcessId
+    }
 }
 
 /**
@@ -630,10 +678,29 @@ RemoveToolTip() {
  *    @Options      - [string] see Options at https://www.autohotkey.com/docs/commands/Run.htm#Parameters
  *
  * @Return
+ *     no return value
 */
 run(Target, WorkingDir:="", Options:="") {
     Run, %Target%, %WorkingDir%, %Options%, v
 }
+
+/**
+ * Arranges a variable's contents in alphabetical, numerical, or random order (optionally removing duplicates).
+ *
+ * @Parameters
+ *    @var          - [string][int] Arranges a variable's contents in alphabetical, numerical, 
+ *                                  or random order (optionally removing duplicates).
+ *    @Options      - [string] A string of zero or more of the following letters (in any order, with optional spaces in between)
+ *                             C, CL, Dx, F MyFunction, N, Pn, R, Random, U, Z, \
+ *                             see Options at https://www.autohotkey.com/docs/commands/Sort.htm#Options
+ *
+ * @Return
+ *    no return value
+*/
+sort(Byref var, Options:="") {
+    Sort var, %Options%
+}
+
 
 /**
  * Retrieves various settings from a sound device (master mute, master volume, etc.)
@@ -740,6 +807,8 @@ transform(Cmd, Value1, Value2:="") {
 */
 tooltip(string:="", timeout:=1000) {
     ToolTip, % string
-    RemoveToolTip := Func("RemoveToolTip").Bind()
-    SetTimer %RemoveToolTip%, % -timeout
+    if (timeout > 0) {
+        RemoveToolTip := Func("RemoveToolTip").Bind()
+        SetTimer %RemoveToolTip%, % -timeout
+    }
 }

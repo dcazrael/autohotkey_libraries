@@ -93,50 +93,50 @@ class String {
         return, out
     }
 
-/**
- * counts occurences of given needle inside the string
- *
- * @Parameters
- *    @needle    - [int][string] this defines what we want to have counted
- *
- * @Return
- *    int
-*/
+    /**
+     * counts occurences of given needle inside the string
+     *
+     * @Parameters
+     *    @needle    - [int][string] this defines what we want to have counted
+     *
+     * @Return
+     *    int
+    */
     count(needle) {
         StrReplace(this, needle , needle, count)
         return, count
     }
 
-/**
- * performs a check if the given needle exists in the string
- * and returns it's position, if found
- *
- * @Parameters
- *    @needle           - [string][int] value to search for
- *    @case_sensitive   - [boolean] makes the search case sensitive
- *    @starting_pos     - [int] sets the starting position
- *
- * @Return
- *    int
-*/
+    /**
+     * performs a check if the given needle exists in the string
+     * and returns it's position, if found
+     *
+     * @Parameters
+     *    @needle           - [string][int] value to search for
+     *    @case_sensitive   - [boolean] makes the search case sensitive
+     *    @starting_pos     - [int] sets the starting position
+     *
+     * @Return
+     *    int
+    */
     inStr(needle, case_sensitive:=false, starting_pos:=1) {
         out := InStr(this, needle, case_sensitive, starting_pos)
         return, out
     }
 
-/**
- * keeps the lines of a multiline variable and returns it
- *
- * @Parameters
- *    @lines    - [string][int] as a string use a lists like this
- *                              3,5,11
- *
- * @Return
- *    string
- *
- * @Remarks
- *     int will only consider the first value
-*/
+    /**
+     * keeps the lines of a multiline variable and returns it
+     *
+     * @Parameters
+     *    @lines    - [string][int] as a string use a lists like this
+     *                              3,5,11
+     *
+     * @Return
+     *    string
+     *
+     * @Remarks
+     *     int will only consider the first value
+    */
     keepLines(lines) {
         VarSetCapacity(out, n:=StrLen(this))
         Loop, Parse, this, `n, `r
@@ -145,43 +145,43 @@ class String {
         return, SubStr(out, 1, -1)
     }
 
-/**
- * returns the leftmost characters
- *
- * @Parameters
- *    @boundary    - [int] this sets how many characters should be returned
- *
- * @Return
- *    string
-*/
+    /**
+     * returns the leftmost characters
+     *
+     * @Parameters
+     *    @boundary    - [int] this sets how many characters should be returned
+     *
+     * @Return
+     *    string
+    */
     left(boundary:=1) {
        StringLeft, out, this, boundary
        return, out
     }
 
-/**
- * returns the rightmost characters
- *
- * @Parameters
- *    @boundary    - [int] this sets how many characters should be returned
- *
- * @Return
- *    string
-*/
+    /**
+     * returns the rightmost characters
+     *
+     * @Parameters
+     *    @boundary    - [int] this sets how many characters should be returned
+     *
+     * @Return
+     *    string
+    */
     right(boundary:=1) {
        StringRight, out, this, boundary
        return, out
     }
 
-/**
- * trims the left most characters until boundary is reached
- *
- * @Parameters
- *    @boundary    - [int] number of characters until trim ends
- *
- * @Return
- *    string
-*/
+    /**
+     * trims the left most characters until boundary is reached
+     *
+     * @Parameters
+     *    @boundary    - [int] number of characters until trim ends
+     *
+     * @Return
+     *    string
+    */
     trimL(boundary:="") {
         if boundary.is_Str
             out := boundary? LTrim(this, boundary):LTrim(this)
@@ -189,16 +189,16 @@ class String {
             StringTrimLeft, out, this, boundary
         return, out
     }
-    
-/**
- * trims the right most characters until boundary is reached
- *
- * @Parameters
- *    @boundary    - [int] number of characters until trim ends
- *
- * @Return
- *    string
-*/
+
+    /**
+     * trims the right most characters until boundary is reached
+     *
+     * @Parameters
+     *    @boundary    - [int] number of characters until trim ends
+     *
+     * @Return
+     *    string
+    */
     trimR(boundary:="") {
         if boundary.is_Str
             return, boundary? RTrim(this, boundary):RTrim(this)
@@ -207,44 +207,44 @@ class String {
         return, out
     }
 
-/**
- * searches for the needle and replaces all occurences
- *
- * @Parameters
- *    @needle           - [string] defines what to search for
- *    @replacement      - [string] defines the replacement
- *
- * @Return
- *    string
-*/
+    /**
+     * searches for the needle and replaces all occurences
+     *
+     * @Parameters
+     *    @needle           - [string] defines what to search for
+     *    @replacement      - [string] defines the replacement
+     *
+     * @Return
+     *    string
+    */
     replace(needle, replacement:="") {
        StringReplace, out, this, %needle%, %replacement%, A
        return, out
     }
 
-/**
- * searches for the needle and replaces all occurences via Regular Expression
- *
- * @Parameters
- *    @needle           - [string] defines which Regular Expression to search for
- *    @replacement      - [string] defines the replacement
- *
- * @Return
- *    string
-*/
+    /**
+     * searches for the needle and replaces all occurences via Regular Expression
+     *
+     * @Parameters
+     *    @needle           - [string] defines which Regular Expression to search for
+     *    @replacement      - [string] defines the replacement
+     *
+     * @Return
+     *    string
+    */
     regExReplace(needle, replacement:="") {
         return, RegExReplace(this, needle, replacement)
     }
 
-/**
- * repeats the string defined number of times
- *
- * @Parameters
- *    @count   - [int] count of how many times string should be repeated
- *
- * @Return
- *    string
-*/
+    /**
+     * repeats the string defined number of times
+     *
+     * @Parameters
+     *    @count   - [int] count of how many times string should be repeated
+     *
+     * @Return
+     *    string
+    */
     times(count) {
         VarSetCapacity(out, count)
         Loop, %count%
@@ -252,19 +252,19 @@ class String {
         return, out
     }
 
-/**
- * splits strng by delimiters and saves values in an object
- *
- * @Parameters
- *    @delim    - [string] character which should be split upon
- *    @omit     - [string] list of characters to exclude from the 
- *                         beginning and end of each array element
- *
- * @Return
- *    object
-*/
+    /**
+     * splits string by delimiters and saves values in an object
+     *
+     * @Parameters
+     *    @delim    - [string] character which should be split upon
+     *    @omit     - [string] list of characters to exclude from the 
+     *                         beginning and end of each array element
+     *
+     * @Return
+     *    object
+    */
     split(delim:="", omit:="") {
-        out := object()
+        out := []
         if (SubStr(delim, 1, 2) = "R)") {
             this := this.Replace(omit), pos := 0, n:=start:=1
             if ((needle:=SubStr(delim, 3))="") {
@@ -281,19 +281,19 @@ class String {
         return, out 
     } 
 
-/**
- * removes the lines of a multiline variable and returns it
- *
- * @Parameters
- *    @lines    - [string][int] as a string use a lists like this
- *                              3,5,11
- *
- * @Return
- *    string
- *
- * @Remarks
- *     int will only consider the first value
-*/
+    /**
+     * removes the lines of a multiline variable and returns it
+     *
+     * @Parameters
+     *    @lines    - [string][int] as a string use a lists like this
+     *                              3,5,11
+     *
+     * @Return
+     *    string
+     *
+     * @Remarks
+     *     int will only consider the first value
+    */
     removeLines(lines) {
         VarSetCapacity(out, n:=StrLen(this))
         Loop, Parse, this, `n, `r 
