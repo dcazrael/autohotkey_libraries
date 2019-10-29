@@ -197,7 +197,7 @@ class CSV
 */
     readRow(row_number, array:=false) {
         row_data := array ? [] : ""
-        Loop, this.csv_total_cols {
+        Loop, % this.csv_total_cols {
             if (array) {
                 row_data.push(this.csv_data[row_number][A_Index])
             } else {

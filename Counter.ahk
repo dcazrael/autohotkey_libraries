@@ -4,7 +4,7 @@
 class Counter {
     __New(interval:=1000) {
         this.interval := interval
-        this.count := 0
+        this.count := A_TickCount
         ; Tick() has an implicit parameter "this" which is a reference to
         ; the object, so we need to create a function which encapsulates
         ; "this" and the method to call:
@@ -21,9 +21,9 @@ class Counter {
         timer := this.timer
         SetTimer % timer, Off
         ToolTip
-        MsgBox, % "Run finished after " this.count " ms."
+        MsgBox, % "Run finished after " Round((A_TickCount - this.count) / 1000, 2) . "s."
     }
     Tick() {
-        ToolTip % "Runtime: " ++this.count
+        ToolTip % "Runtime: " Round((A_TickCount - this.count) / 1000, 2) . "s."
     }
 }

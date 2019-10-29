@@ -123,7 +123,7 @@ envGet(EnvVarName) {
     return out
 }
 
-fileAppend(text, fileName, encoding) {
+fileAppend(text, fileName, encoding:="UTF-8") {
     FileAppend, % text, % fileName, % encoding
 }
 
@@ -563,10 +563,7 @@ killProcess(pName){
  *    Return
 */
 msgbox(message, Options:="", Title:="", Timeout:=""){
-    global unit_test
-    if (!unit_test){
-        MsgBox, % Options, % Title, % message, % Timeout
-    }
+    MsgBox, % Options, % Title, % message, % Timeout
 }
 
 /**

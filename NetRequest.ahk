@@ -11,7 +11,7 @@
  *    This is by no means necessary, but it's easier dealing with 
  *    JSON objects, than working with the string responses.
 */
-#Include <JSON>
+;#Include %A_LineFile%\..\JSON.ahk
 
 Class NetRequest {
     request_header := {"GET":"application/json", "POST":"application/x-www-form-urlencoded;charset=utf-8"}
@@ -27,6 +27,7 @@ Class NetRequest {
  * @Parameters
  *    @host        - [string] expects valid URL
  *    @endpoint    - [string] valid endpoint for API you want to hit
+ *                            /rest/asset/v1/programs.json
  *
  * @Return
  *    Return
@@ -35,7 +36,6 @@ Class NetRequest {
         this.host := host
         this.endpoint := endpoint
     }
-
 
 /**
  * used for requesting data from APIs
@@ -51,16 +51,22 @@ Class NetRequest {
  *    JSON Object
 */
     apiRequest(parms*) {
+        start_query := 1
         for each, parm in parms {
-            parameters .= (A_Index == 1 ? "?" : "&") . parm
+            if (!Instr(parm, "=")) {
+                parameters := "/" . parm
+            } else {
+                parameters .= (start_query == 1 ? "?" : "&") . parm
+                start_query := 
+            }
         }
 
         request := this.createRequestObj(this.host . "/" . this.endpoint . parameters)
+        if (!request) {
+            return false
+        }
         if (!Isobject(request)) {
             return request
-        }
-        if (!request) {
-         return false
         }
         json_response := JSON.Load(request.ResponseText)
         return json_response
@@ -114,7 +120,7 @@ Class NetRequest {
  *                    {"resolve_timeout": 0, "connect_timeout": 30000, "send_timeout": 30000, "receive_timeout": 60000}
  *
  * @Return
- *    response_obj       - object
+ *    object
 */
     createRequestObj(endpoint:="", method:="GET", body:="", timeouts:=""){
 
@@ -153,12 +159,11 @@ Class NetRequest {
             return error.Message
         }
 
-        response_obj := request_obj
-        if (response_obj == "") {
+        if (request_obj == "") {
             msgbox, 4112,"Fatal Error","Couldn't receive response."
             return "Fatal Error. Couldn't receive response."
         }
-        return response_obj
+        return request_obj
     }
 
 /**
