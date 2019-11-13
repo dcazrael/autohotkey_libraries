@@ -809,3 +809,10 @@ tooltip(string:="", timeout:=1000) {
         SetTimer %RemoveToolTip%, % -timeout
     }
 }
+
+urlDownloadToFile(path_to_file, download_directory, file_name) {
+    if (!FileExist(download_directory)) {
+        fileCreateDir(download_directory)
+    } 
+    UrlDownloadToFile, %path_to_file%, %download_directory%\%file_name%
+}
