@@ -50,7 +50,7 @@ Class NetRequest {
      * @Return
      *    JSON Object
     */
-    apiRequest(parms*) {
+    apiRequest(method:="GET", body:="", parms*) {
         start_query := 1
         for each, parm in parms {
             if (!Instr(parm, "=")) {
@@ -61,7 +61,7 @@ Class NetRequest {
             }
         }
 
-        request := this.createRequestObj(this.host . "/" . this.endpoint . parameters)
+        request := this.createRequestObj(this.host . "/" . this.endpoint . parameters, method, body)
         if (!request) {
             return false
         }
