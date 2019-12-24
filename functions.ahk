@@ -44,17 +44,17 @@ contains(ByRef var, list_items*) {
  * adds time to existing time variable
  *
  * @Parameters
- *    @DateTime     - [string] name of the variable upon which to operate
+ *    @dateTime     - [string] name of the variable upon which to operate
  *                             usually contains a time string
- *    @Time         - [various] any integer, floating point number, or expression
+ *    @time         - [various] any integer, floating point number, or expression
  *                              specify a negative number to perform subtraction
- *    @TimeUnits    - [string] TimeUnits can be either Seconds, Minutes, Hours, or Days 
+ *    @timeUnits    - [string] TimeUnits can be either Seconds, Minutes, Hours, or Days 
  *                             (or just the first letter of each of these)
  *
  * @Return
  *    Return
 */
-DateAdd(DateTime, Time, TimeUnits) {
+dateAdd(dateTime, time, timeUnits) {
     EnvAdd, DateTime, % Time, % TimeUnits
     return DateTime
 }
@@ -63,16 +63,16 @@ DateAdd(DateTime, Time, TimeUnits) {
  * returns the difference between two dates/times
  *
  * @Parameters
- *    @DateTime1    - [string] name of the variable upon which to operate
- *    @DateTime2    - [various] any integer, floating point number, or expression 
+ *    @dateTime1    - [string] name of the variable upon which to operate
+ *    @dateTime2    - [various] any integer, floating point number, or expression 
  *                              (expressions are not supported when TimeUnits is present)
- *    @TimeUnits    - [string] TimeUnits can be either Seconds, Minutes, Hours, or Days 
+ *    @timeUnits    - [string] TimeUnits can be either Seconds, Minutes, Hours, or Days 
  *                             (or just the first letter of each of these)
  *
  * @Return
  *    Return
 */
-DateDiff(DateTime1, DateTime2, TimeUnits) {
+dateDiff(dateTime1, dateTime2, timeUnits) {
     EnvSub, DateTime1, % DateTime2, % TimeUnits
     return DateTime1
 }
@@ -316,6 +316,25 @@ fileSelectFolder(StartingFolder:="", Options:="", Prompt:="") {
     FileSelectFolder, out, %StartingFolder%, %Options%, %Prompt%
     return out
 }
+
+/**
+ * Returns the floor modulus of the int arguments.
+ * The floor modulus is x - (Floor(x / y) * y), has the same sign as the divisor y
+ * The difference in values between floorMod and the % operator is due to the difference 
+ * between a "floor division" which returns the integer <<less than or equal to the quotient>> 
+ * and the "/"" operator that returns the <<integer closest to zero>>.
+ *
+ * @Parameters
+ *    @int1    - [int] dividend
+ *    @int2    - [int] divisor
+ *
+ * @Return
+ *    int
+*/
+floorMod(int1, int2) {
+    return int1 - (Floor(int1 / int2) * int2)
+}
+
 
 /**
  * Formats time string into specified format

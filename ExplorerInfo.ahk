@@ -1,8 +1,3 @@
-/*
- * Original by Joshua A. Kinnison on 2011-04-27, 16:12
- * rewritten as class by Michael Sachdev
-*/
-
 /**
  *  retrieves info from a specific explorer window (if window handle not specified, 
  *  the currently active window will be used).  Requires AHK_L or similar.  
